@@ -62,6 +62,10 @@ def minimize_errors(graph, initial_estimate, pose_options):
     best_pose = "d"      # chosen pose option
     best_landmark = 1    # chosen landmark (1 or 2)
     pose_5 = pose_options[best_pose]
+    if initial_estimate.exists(X(5)):
+        initial_estimate.erase(X(5))
+    if graph.exists(X(5)):
+        graph.erase(X(5))
     graph, initial_estimate = add_pose(graph, initial_estimate, pose_5)
     result = optimize(graph, initial_estimate)
     graph = add_landmark_measurement(graph, result, pose_5, best_landmark)
@@ -76,5 +80,26 @@ def minimize_errors(graph, initial_estimate, pose_options):
 
     sum_of_errors = sum(list_of_errors)
 
+    X1 = [0.0, 0.0, 0.0]
+    X2 = [2.0, 0.0, 0.0]
+    X3 = [4.0, 0.0, 0.0]
+
+    pose1 = result.atPose2(X(1))
+    pose2 = result.atPose2(X(2))
+    pose3 = result.atPose2(X(3))
+
+    x1, y1, th1 = pose1.x(), pose1.y(), pose1.theta()
+    x2, y2, th2 = pose2.x(), pose2.y(), pose2.theta()
+    x3, y3, th3 = pose3.x(), pose3.y(), pose3.theta()
+
+    X1_new = [x1, y1, th1]
+    X2_new = [x2, y2, th2]
+    X3_new = [x3, y3, th3]
+
+    error_X1 = np.linalg.norm(np.array(X1) - np.array(X1_new))
+    error_X2 = np.linalg.norm(np.array(X2) - np.array(X2_new))
+    error_X3 = np.linalg.norm(np.array(X3) - np.array(X3_new))
+                                                
+    sum_of_errors = error_X1 + error_X2 + error_X3
 
     return best_pose, best_landmark, sum_of_errors 
