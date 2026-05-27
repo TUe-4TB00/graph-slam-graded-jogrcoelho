@@ -71,15 +71,6 @@ def minimize_errors(graph, initial_estimate, pose_options):
     graph = add_landmark_measurement(graph, result, pose_5, best_landmark)
     result = optimize(graph, initial_estimate)
 
-    list_of_errors = []
-
-    for i in range(graph.size()):
-        factor = graph.at(i)
-        if factor is not None:
-            list_of_errors.append(factor.error(result))
-
-    sum_of_errors = sum(list_of_errors)
-
     X1 = [0.0, 0.0, 0.0]
     X2 = [2.0, 0.0, 0.0]
     X3 = [4.0, 0.0, 0.0]
